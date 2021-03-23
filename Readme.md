@@ -5,7 +5,7 @@ This repository is described at <https://khalidabuhakmeh.com> at <https://khalid
 To run this project you will need:
 
 - ASP.NET Core 2.2+
-- Elasticsearch 7.3
+- Elasticsearch 7.3 (https://www.docker.elastic.co/)
 
 Please install both for your environment. Feel free to reach out for help if you need it. :)
 

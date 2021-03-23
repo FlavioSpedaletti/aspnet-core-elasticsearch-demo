@@ -10,9 +10,9 @@ namespace KhalidAbuhakmeh.AspNetCore.Search.Models.Elasticsearch
     public class CapitalCities
     {
         public const string IndexName = "capitals";
-        
+
         private ElasticClient client;
-        
+
         public CapitalCities(ElasticClient client)
         {
             this.client = client;
@@ -24,14 +24,14 @@ namespace KhalidAbuhakmeh.AspNetCore.Search.Models.Elasticsearch
             // you probably don't want to do this kind of
             // index management in a production environment
             var index = await client.Indices.ExistsAsync(IndexName);
-            
+
             if (index.Exists)
             {
                 await client.Indices.DeleteAsync(IndexName);
             }
-            
+
             // let's create the index
-            var createResult = 
+            var createResult =
                 await client.Indices.CreateAsync(IndexName, c => c
                     .Settings(s => s
                         .Analysis(a => a
@@ -41,11 +41,13 @@ namespace KhalidAbuhakmeh.AspNetCore.Search.Models.Elasticsearch
                     )
                 .Map<CapitalSearchDocument>(m => m.AutoMap())
             );
-            
+
             // let's load the data
             var file = File.Open("capital_cities.csv", FileMode.Open);
             using (var csv = new CsvReader(new StreamReader(file)))
             {
+                csv.Configuration.Delimiter = ",";
+
                 // describe's the csv file
                 csv.Configuration.RegisterClassMap<CapitalCitiesMapping>();
 

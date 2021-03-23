@@ -1,16 +1,13 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using KhalidAbuhakmeh.AspNetCore.Search.Models.Elasticsearch;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Nest;
+using Microsoft.Extensions.Hosting;
+
 
 namespace KhalidAbuhakmeh.AspNetCore.Search
 {
@@ -27,7 +24,7 @@ namespace KhalidAbuhakmeh.AspNetCore.Search
         public void ConfigureServices(IServiceCollection services)
         {
             var connectionString = Configuration.GetConnectionString("elasticsearch");
-            
+
             // 1. Register NEST ElasticClient
             var settings = new ConnectionSettings(new Uri(connectionString))
                 .DefaultIndex("capitals");
@@ -42,22 +39,21 @@ namespace KhalidAbuhakmeh.AspNetCore.Search
                 return client;
             });
 
-            
+
             // 2. Register Capital City Loader
             services.AddScoped<CapitalCities>();
-            
+
             services.Configure<CookiePolicyOptions>(options =>
             {
                 options.CheckConsentNeeded = context => false;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddRazorPages();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -72,9 +68,10 @@ namespace KhalidAbuhakmeh.AspNetCore.Search
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-            app.UseCookiePolicy();
 
-            app.UseMvc();
+            app.UseRouting();
+
+            app.UseEndpoints(endpoints => { endpoints.MapRazorPages(); });
         }
     }
 }

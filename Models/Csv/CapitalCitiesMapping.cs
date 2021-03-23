@@ -1,4 +1,5 @@
 using CsvHelper.Configuration;
+using System.Globalization;
 
 namespace KhalidAbuhakmeh.AspNetCore.Search.Models.Csv
 {
@@ -6,13 +7,13 @@ namespace KhalidAbuhakmeh.AspNetCore.Search.Models.Csv
     {
         public CapitalCitiesMapping()
         {
-            Map(x => x.Id).Name("id");
             Map(x => x.City).Name("city");
             Map(x => x.CityAscii).Name("city_ascii");
-            Map(x => x.Latitude).Name("lat");
-            Map(x => x.Longitude).Name("lng");
+            Map(x => x.Latitude).ConvertUsing(d => decimal.Parse(d.GetField("lat"), CultureInfo.GetCultureInfo("en-US"))).Name("lat");
+            Map(x => x.Longitude).ConvertUsing(d => decimal.Parse(d.GetField("lng"), CultureInfo.GetCultureInfo("en-US"))).Name("lng");
             Map(x => x.Country).Name("country");
             Map(x => x.Population).Name("population");
+            Map(x => x.Id).Name("id");
         }
     }
 
